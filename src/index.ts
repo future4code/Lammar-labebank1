@@ -11,7 +11,7 @@ app.use(cors());
 
 // CREATE ACCOUNT
 
-app.post("/accounts", (req, res) => {
+app.post("/users", (req, res) => {
 
     let errorCode = 400
     const userName = req.body.name
@@ -47,6 +47,20 @@ app.post("/accounts", (req, res) => {
             errorCode = 422
             throw new Error("A data de nascimento do usuário da conta deve ser do tipo string!");
         }
+        if (userCpf.length !== 14 || userCpf[3] !== "." || userCpf[7] !== "." || userCpf[11] !== "-") {
+            errorCode = 422
+            throw new Error("O CPF deve ser no formato 000.000.000-00");
+        }
+
+        const findCpf = accounts.find(account => {
+            return account.cpf === userCpf
+        })
+
+        if (findCpf) {
+            errorCode = 409
+            throw new Error("Já existe um usuário com este CPF!");
+        }
+
         if (userBirthDate.length !== 10 || userBirthDate[2] !== "/" || userBirthDate[5] !== "/") {
             errorCode = 422
             throw new Error("A data deve ser no formato DD/MM/AAAA");
@@ -64,7 +78,7 @@ app.post("/accounts", (req, res) => {
 
         if (getAge(userBirthDate) < 18) {
             errorCode = 401
-            throw new Error("A idade do usuário deve ser maior ou igual a 18 anos");
+            throw new Error("A idade do usuário deve ser maior ou igual a 18 anos!");
         }
 
         accounts.push({
@@ -80,6 +94,18 @@ app.post("/accounts", (req, res) => {
     } catch (e: any) {
         res.status(errorCode).send(e.message)
     }
+})
+
+// GET USERS
+
+app.get("/users", (req, res) => {
+
+    const showUsers = accounts.map (account => {
+        return account
+    })
+
+    res.status(200).send(showUsers)
+
 })
 
 
