@@ -21,35 +21,35 @@ app.post("/users", (req, res) => {
     try {
         if (!userName && !userCpf && !userBirthDate) {
             errorCode = 422
-            throw new Error("O nome, cpf e data de nascimento do usuário da conta não foram informados!");
+            throw new Error("O nome, cpf e data de nascimento do usuário não foram informados!");
         }
         if (!userName) {
             errorCode = 422
-            throw new Error("O nome do usuário da conta não foi informado!");
+            throw new Error("O nome do usuário não foi informado!");
         }
         if (!userCpf) {
             errorCode = 422
-            throw new Error("O cpf do usuário da conta não foi informado!");
+            throw new Error("O cpf do usuário não foi informado!");
         }
         if (!userBirthDate) {
             errorCode = 422
-            throw new Error("A data de nascimento do usuário da conta não foi informado!");
+            throw new Error("A data de nascimento do usuário não foi informada!");
         }
         if (typeof userName !== "string") {
             errorCode = 422
-            throw new Error("O nome do usuário da conta deve ser do tipo string!");
+            throw new Error("O nome do usuário deve ser do tipo string!");
         }
         if (typeof userCpf !== "string") {
             errorCode = 422
-            throw new Error("O cpf do usuário da conta deve ser do tipo string!");
+            throw new Error("O cpf do usuário deve ser do tipo string!");
         }
         if (typeof userBirthDate !== "string") {
             errorCode = 422
-            throw new Error("A data de nascimento do usuário da conta deve ser do tipo string!");
+            throw new Error("A data de nascimento do usuário deve ser do tipo string!");
         }
         if (userCpf.length !== 14 || userCpf[3] !== "." || userCpf[7] !== "." || userCpf[11] !== "-") {
             errorCode = 422
-            throw new Error("O CPF deve ser no formato 000.000.000-00");
+            throw new Error("O cpf deve ser no formato 000.000.000-00");
         }
 
         const findCpf = accounts.find(account => {
@@ -58,7 +58,7 @@ app.post("/users", (req, res) => {
 
         if (findCpf) {
             errorCode = 409
-            throw new Error("Já existe um usuário com este CPF!");
+            throw new Error("Já existe um usuário com este cpf!");
         }
 
         if (userBirthDate.length !== 10 || userBirthDate[2] !== "/" || userBirthDate[5] !== "/") {
@@ -113,52 +113,100 @@ app.get("/users", (req, res) => {
 
 app.get('/balance', (req, res) => {
 
-    const cpfUser = req.body.cpf
-    const nameUser = req.body.name
+    let errorCode = 400
+    const userCpf = req.query.cpf as string
 
-    if (!cpfUser || !nameUser) { return res.status(422).send("Preencha Corretamente os campos") }
+    try {
+        if (!userCpf) {
+            errorCode = 422
+            throw new Error("O cpf do usuário não foi informado!");
+        }
+        if (userCpf.length !== 14 || userCpf[3] !== "." || userCpf[7] !== "." || userCpf[11] !== "-") {
+            errorCode = 422
+            throw new Error("O cpf deve ser no formato 000.000.000-00");
+        }
 
-    const getBalance = accounts.find((account) => {
-        return account.cpf === cpfUser && account.name === nameUser
-    })
+        const getBalance = accounts.find((account) => {
+            return account.cpf === userCpf
+        })
 
-    if (!getBalance) {
-        return res.status(422).send("Conta não encontrada")
+        if (!getBalance) {
+            errorCode = 404
+            throw new Error("Conta não encontrada!");
+        }
+        res.status(200).send(`O saldo da conta é: R$ ${getBalance.balance}`)
+    } catch (e: any) {
+        res.status(errorCode).send(e.message)
     }
 
-    res.status(200).send(`"balance": ${getBalance.balance}`)
 })
 
 // PUT DEPOSIT
 
 app.put('/deposit', (req, res) => {
 
+    let errorCode = 400
+
     const addFunds = req.body.value
-    const cpfUser = req.body.cpf
-    const nameUser = req.body.name
+    const userCpf = req.body.cpf
+    const userName = req.body.name
 
-    if (!cpfUser || !nameUser || !addFunds) {
-        return res.status(422).send("Preencha todos os campos corretamente")
+    try {
+        if (!userCpf && !userName && !addFunds) {
+            errorCode = 422
+            throw new Error("Preencha todos os campos corretamente!");
+        }
+        if (!userName) {
+            errorCode = 422
+            throw new Error("O nome do usuário não foi informado!");
+        }
+        if (!userCpf) {
+            errorCode = 422
+            throw new Error("O cpf do usuário não foi informado!");
+        }
+        if (!addFunds) {
+            errorCode = 422
+            throw new Error("O valor do depósito não foi informado!");
+        }
+        if (typeof userName !== "string") {
+            errorCode = 422
+            throw new Error("O nome do usuário deve ser do tipo string!");
+        }
+        if (typeof userCpf !== "string") {
+            errorCode = 422
+            throw new Error("O cpf do usuário deve ser do tipo string!");
+        }
+        if (userCpf.length !== 14 || userCpf[3] !== "." || userCpf[7] !== "." || userCpf[11] !== "-") {
+            errorCode = 422
+            throw new Error("O cpf deve ser no formato 000.000.000-00");
+        }
+        if (typeof addFunds !== "number") {
+            errorCode = 422
+            throw new Error("O valor do depósito deve ser do tipo number!");
+        }
+        if (addFunds <= 0) {
+            errorCode = 422
+            throw new Error("O depósito não pode ser manor ou igual a zero. Favor inserir um número maior que zero.");
+        }
+
+        const findedUser = accounts.find((account) => {
+            return account.cpf === userCpf && account.name === userName
+        })
+
+        if (!findedUser) {
+            errorCode = 404
+            throw new Error("Conta não encontrada!");
+        }
+
+        res.status(200).send(`Deposito efetuado com sucesso, seu novo saldo é: R$ ${addFunds + findedUser.balance}`)
+    } catch (e: any) {
+        res.status(errorCode).send(e.message)
     }
 
-    const user = accounts.find((account) => {
-        return account.cpf === cpfUser && account.name === nameUser
-    })
-    if (addFunds < 0) {
-        return res.status(400).send("O depósito não pode ser negativo, favor insira um número maior que zero")
-    }
-
-    if (!user) {
-        return res.status(422).send("Conta não encontrada")
-    }
-
-    res.status(200).send(`Deposito Efetuado com sucesso, seu novo saldo é R$": ${addFunds + user.balance}`)
 })
 
 
-
-
-// ---------------------- SERVER RESPONSE ---------------------------- //
+// ---------------------- SERVER RESPONSE --------------------------- //
 
 app.listen(3003, () => {
     console.log("Server is running in http://localhost:3003");
