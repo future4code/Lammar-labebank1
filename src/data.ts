@@ -17,18 +17,18 @@ export const accounts: type.Account[] = [
             {
                 value: 6000,
                 date: "20/10/2022",
-                description: "Deposit"
+                description: "Depósito de dinheiro"
             },
             {
                 value: -1000,
                 date: "22/09/2022",
-                description: "Withdraw"
+                description: "Transferência"
             },
             {
                 value: -1000,
                 date: "22/08/2022",
-                description: "Withdraw"
-            },
+                description: "Pagamento"
+            }
         ]
         
     },
@@ -41,17 +41,17 @@ export const accounts: type.Account[] = [
             {
                 value: 3000,
                 date: "20/10/2022",
-                description: "Deposit"
+                description: "Depósito de dinheiro"
             },
             {
                 value: -1000,
                 date: "12/10/2022",
-                description: "Withdraw"
+                description: "Pagamento"
             },
             {
                 value: -500,
                 date: "20/09/2022",
-                description: "Withdraw"
+                description: "Transferência"
             },
         ]
     },
@@ -64,17 +64,17 @@ export const accounts: type.Account[] = [
             {
                 value: -30000,
                 date: "10/08/2022",
-                description: "Payment"
+                description: "Pagamento"
             },
             {
                 value: 50000,
                 date: "12/07/2022",
-                description: "Transfer"
+                description: "Depósito de dinheiro"
             },
             {
                 value: 100000,
                 date: "01/05/2022",
-                description: "Deposit"
+                description: "Depósito de dinheiro"
             },
         ]    },
     {
@@ -93,27 +93,27 @@ export const accounts: type.Account[] = [
             {
                 value: 1500000,
                 date: "20/10/2022",
-                description: "Deposit"
+                description: "Depósito de dinheiro"
             },
             {
                 value: 500000,
                 date: "12/04/2022",
-                description: "Deposit"
+                description: "Depósito de dinheiro"
             },
             {
                 value: 1000000,
                 date: "20/02/2022",
-                description: "Withdraw"
+                description: "Depósito de dinheiro"
             },
             {
                 value: 1000000,
                 date: "20/01/2022",
-                description: "Deposit"
+                description: "Depósito de dinheiro"
             },
             {
                 value: 500000,
                 date: "02/01/2022",
-                description: "Deposit"
+                description: "Depósito de dinheiro"
             },
         ]
     },
@@ -133,22 +133,22 @@ export const accounts: type.Account[] = [
             {
                 value: 400,
                 date: "02/04/2022",
-                description: "Deposit"
+                description: "Depósito de dinheiro"
             },
             {
                 value: 100,
                 date: "02/02/2022",
-                description: "Deposit"
+                description: "Depósito de dinheiro"
             },
             {
                 value: 300,
                 date: "02/01/2022",
-                description: "Deposit"
+                description: "Depósito de dinheiro"
             },
             {
                 value: 200,
                 date: "01/01/2022",
-                description: "Deposit"
+                description: "Depósito de dinheiro"
             },
         ]
     },
