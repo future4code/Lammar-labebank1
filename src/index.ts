@@ -72,8 +72,8 @@ app.post("/users", (req, res) => {
             const m = (today.getMonth() + 1) - Number(birthDate.substring(3, 5));
             if (m < 0 || (m === 0 && today.getDate() < Number(birthDate.substring(0, 2)))) {
                 age--;
-            }    
-            return age;            
+            }
+            return age;
         }
 
         if (getAge(userBirthDate) < 18) {
@@ -100,7 +100,7 @@ app.post("/users", (req, res) => {
 
 app.get("/users", (req, res) => {
 
-    const showUsers = accounts.map (account => {
+    const showUsers = accounts.map(account => {
         return account
     })
 
@@ -109,8 +109,58 @@ app.get("/users", (req, res) => {
 })
 
 
+// GET BALANCE
+
+app.get('/balance', (req, res) => {
+
+    const cpfUser = req.body.cpf
+    const nameUser = req.body.name
+
+    if (!cpfUser || !nameUser) { return res.status(422).send("Preencha Corretamente os campos") }
+
+    const getBalance = accounts.find((account) => {
+        return account.cpf === cpfUser && account.name === nameUser
+    })
+
+    if (!getBalance) {
+        return res.status(422).send("Conta não encontrada")
+    }
+
+    res.status(200).send(`"balance": ${getBalance.balance}`)
+})
+
+// PUT DEPOSIT
+
+app.put('/deposit', (req, res) => {
+
+    const addFunds = req.body.value
+    const cpfUser = req.body.cpf
+    const nameUser = req.body.name
+
+    if (!cpfUser || !nameUser || !addFunds) {
+        return res.status(422).send("Preencha todos os campos corretamente")
+    }
+
+    const user = accounts.find((account) => {
+        return account.cpf === cpfUser && account.name === nameUser
+    })
+    if (addFunds < 0) {
+        return res.status(400).send("O depósito não pode ser negativo, favor insira um número maior que zero")
+    }
+
+    if (!user) {
+        return res.status(422).send("Conta não encontrada")
+    }
+
+    res.status(200).send(`Deposito Efetuado com sucesso, seu novo saldo é R$": ${addFunds + user.balance}`)
+})
+
+
+
+
 // ---------------------- SERVER RESPONSE ---------------------------- //
 
 app.listen(3003, () => {
     console.log("Server is running in http://localhost:3003");
 });
+
