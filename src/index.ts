@@ -109,6 +109,7 @@ app.post("/users", (req, res) => {
         if (findCpf) {
             errorCode = 409
             throw new Error("Já existe um usuário com este cpf!");
+            
         }
 
         const getAge = (birthDate: string): number => {
